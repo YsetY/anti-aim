@@ -263,6 +263,7 @@ player.CharacterAdded:Connect(function()
 end)
 
 removePunchTool()
+end
 
 
 local replicatedStorage = game:GetService("ReplicatedStorage")
