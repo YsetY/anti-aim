@@ -228,7 +228,7 @@ for i, v in pairs(Descendants) do
 end
 
 
-_G.HeadSize = 10
+_G.LOL = 10
 _G.Disabled = true
  
 game:GetService('RunService').RenderStepped:connect(function()
