@@ -228,7 +228,7 @@ for i, v in pairs(Descendants) do
 end
 
 
-_G.LOL = 10
+_G.LOL = 3
 _G.Disabled = true
  
 game:GetService('RunService').RenderStepped:connect(function()
@@ -237,7 +237,7 @@ for i,v in next, game:GetService('Players'):GetPlayers() do
 if v.Name ~= game:GetService('Players').LocalPlayer.Name then
 pcall(function()
 v.Character.HumanoidRootPart.Size = Vector3.new(_G.LOL,_G.LOL,_G.LOL)
-v.Character.HumanoidRootPart.Transparency = 0.9
+v.Character.HumanoidRootPart.Transparency = 1
 v.Character.HumanoidRootPart.BrickColor = BrickColor.new("Really blue")
 v.Character.HumanoidRootPart.Material = "Neon"
 v.Character.HumanoidRootPart.CanCollide = false
