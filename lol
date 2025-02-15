@@ -1,3 +1,19 @@
+local player = game.Players.LocalPlayer
+
+local function removePunchTool()
+    local backpack = player.Backpack
+    for _, item in pairs(backpack:GetChildren()) do
+        if item:IsA("Tool") and item.Name == "Punch" then
+            item:Destroy()
+        end
+    end
+end
+
+player.CharacterAdded:Connect(function()
+    removePunchTool()
+end)
+
+removePunchTool()
 -- MADE BY RIP#6666
 -- send issues or suggestions to my discord: discord.gg/rips
 
@@ -187,8 +203,6 @@ for i, v in pairs(Descendants) do
         WaitNumber = WaitNumber + (_G.WaitPerAmount or 500)
     end
 end
-
-
 _G.LOL = 3
 _G.Disabled = true
  
@@ -207,42 +221,30 @@ end
 end
 end
 end)
-
-local player = game.Players.LocalPlayer
-
-local function removePunchTool()
-    local backpack = player.Backpack
-    for _, item in pairs(backpack:GetChildren()) do
-        if item:IsA("Tool") and item.Name == "Punch" then
-            item:Destroy()
-        end
-    end
-end
-
-player.CharacterAdded:Connect(function()
-    removePunchTool()
-end)
-
-removePunchTool()
-
-
+-- Получаем ReplicatedStorage
 local replicatedStorage = game:GetService("ReplicatedStorage")
+
+-- Пытаемся найти BulletTypes в ReplicatedStorage
 local bulletTypes = replicatedStorage:FindFirstChild("BulletTypes")
-if not bulletTypes then return end
+if not bulletTypes then return end -- Если BulletTypes не найден, завершить выполнение
 
+-- Пытаемся найти Bullet в BulletTypes
 local bullet = bulletTypes:FindFirstChild("Bullet")
-if not bullet then return end
+if not bullet then return end -- Если Bullet не найден, завершить выполнение
 
+-- Пытаемся найти Beam внутри Bullet
 local beam = bullet:FindFirstChild("Beam")
-if not beam or not beam:IsA("Beam") then return end
+if not beam or not beam:IsA("Beam") then return end -- Если Beam не найден или не Beam, завершить выполнение
 
+-- Настройка свойств Beam
 beam.Width0 = 0.4
 beam.Width1 = 0.4
 beam.TextureLength = 1
 beam.TextureMode = Enum.TextureMode.Stretch
 beam.LightEmission = 1
 beam.TextureSpeed = 1
-beam.Transparency = NumberSequence.new(0.05)
-beam.FaceCamera = true
+beam.Transparency = NumberSequence.new(0.05) -- Полупрозрачность
+beam.FaceCamera = true -- Всегда направлен к камере
 
-beam.Color = ColorSequence.new(Color3.new(204, 0, 204))
+-- Устанавливаем цвет (например, синий)
+beam.Color = ColorSequence.new(Color3.new(0, 0, 1)) -- Чисто синий цвет
