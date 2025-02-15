@@ -1,14 +1,17 @@
+-- MADE BY RIP#6666
+-- send issues or suggestions to my discord: discord.gg/rips
+
 if not _G.Ignore then
-    _G.Ignore = {}
+    _G.Ignore = {} -- Add Instances to this table to ignore them (e.g. _G.Ignore = {workspace.Map, workspace.Map2})
 end
 if not _G.WaitPerAmount then
-    _G.WaitPerAmount = 500
+    _G.WaitPerAmount = 500 -- Set Higher or Lower depending on your computer's performance
 end
 if _G.SendNotifications == nil then
-    _G.SendNotifications = false
+    _G.SendNotifications = false -- Set to false if you don't want notifications
 end
 if _G.ConsoleLogs == nil then
-    _G.ConsoleLogs = false
+    _G.ConsoleLogs = false -- Set to true if you want console logs (mainly for debugging)
 end
 
 if not game:IsLoaded() then
@@ -92,22 +95,116 @@ local function DescendantOfIgnore(Instance)
     return false
 end
 
-game:GetService('RunService').RenderStepped:connect(function()
-    if _G.Disabled then
-        for _, v in pairs(Players:GetPlayers()) do
-            if v.Name ~= ME.Name then
-                pcall(function()
-                    v.Character.HumanoidRootPart.Size = Vector3.new(_G.LOL, _G.LOL, _G.LOL)
-                    v.Character.HumanoidRootPart.Transparency = 1
-                    v.Character.HumanoidRootPart.BrickColor = BrickColor.new("Really blue")
-                    v.Character.HumanoidRootPart.Material = "Neon"
-                    v.Character.HumanoidRootPart.CanCollide = false
-                end)
+local function CheckIfBad(Instance)
+    if not Instance:IsDescendantOf(Players) and
+       (_G.Settings.Players["Ignore Others"] and not PartOfCharacter(Instance) or not _G.Settings.Players["Ignore Others"]) and
+       (_G.Settings.Players["Ignore Me"] and ME.Character and not Instance:IsDescendantOf(ME.Character) or not _G.Settings.Players["Ignore Me"]) and
+       (_G.Settings.Players["Ignore Tools"] and not Instance:IsA("BackpackItem") and not Instance:FindFirstAncestorWhichIsA("BackpackItem") or not _G.Settings.Players["Ignore Tools"]) and
+       (_G.Ignore and not table.find(_G.Ignore, Instance) and not DescendantOfIgnore(Instance) or
+       (not _G.Ignore or type(_G.Ignore) ~= "table" or #_G.Ignore <= 0)) then
+        
+        if Instance:IsA("DataModelMesh") then
+            if _G.Settings.Meshes.NoMesh and Instance:IsA("SpecialMesh") then
+                Instance.MeshId = ""
+            end
+            if _G.Settings.Meshes.NoTexture and Instance:IsA("SpecialMesh") then
+                Instance.TextureId = ""
+            end
+            if _G.Settings.Meshes.Destroy then
+                Instance:Destroy()
+            end
+        elseif Instance:IsA("FaceInstance") then
+            if _G.Settings.Images.Invisible then
+                Instance.Transparency = 1
+                Instance.Shiny = 1
+            end
+            if _G.Settings.Images.Destroy then
+                Instance:Destroy()
+            end
+        elseif Instance:IsA("ShirtGraphic") then
+            if _G.Settings.Images.Invisible then
+                Instance.Graphic = ""
+            end
+            if _G.Settings.Images.Destroy then
+                Instance:Destroy()
+            end
+        elseif table.find(CanBeEnabled, Instance.ClassName) then
+            if _G.Settings.Particles.Invisible then
+                Instance.Enabled = false
+            end
+            if _G.Settings.Particles.Destroy then
+                Instance:Destroy()
+            end
+        elseif Instance:IsA("PostEffect") and _G.Settings.Other["No Camera Effects"] then
+            Instance.Enabled = false
+        elseif Instance:IsA("Explosion") then
+            if _G.Settings.Explosions.Smaller then
+                Instance.BlastPressure = 1
+                Instance.BlastRadius = 1
+            end
+            if _G.Settings.Explosions.Invisible then
+                Instance.Visible = false
+            end
+            if _G.Settings.Explosions.Destroy then
+                Instance:Destroy()
+            end
+        elseif Instance:IsA("Clothing") or Instance:IsA("SurfaceAppearance") or Instance:IsA("BaseWrap") then
+            if _G.Settings.Other["No Clothes"] then
+                Instance:Destroy()
+            end
+        elseif Instance:IsA("BasePart") and not Instance:IsA("MeshPart") then
+            if _G.Settings.Other["Low Quality Parts"] then
+                Instance.Material = Enum.Material.Plastic
+                Instance.Reflectance = 0
+            end
+        elseif Instance:IsA("TextLabel") and Instance:IsDescendantOf(workspace) then
+            if _G.Settings.TextLabels.LowerQuality then
+                Instance.Font = Enum.Font.SourceSans
+                Instance.TextSize = 14
+            end
+            if _G.Settings.TextLabels.Invisible then
+                Instance.Visible = false
+            end
+            if _G.Settings.TextLabels.Destroy then
+                Instance:Destroy()
             end
         end
     end
+end
+
+game.DescendantAdded:Connect(function(value)
+    task.wait(_G.LoadedWait or 1)
+    CheckIfBad(value)
 end)
 
+local Descendants = game:GetDescendants()
+local WaitNumber = _G.WaitPerAmount or 500
+
+for i, v in pairs(Descendants) do
+    CheckIfBad(v)
+    if i == WaitNumber then
+        task.wait()
+        WaitNumber = WaitNumber + (_G.WaitPerAmount or 500)
+    end
+end
+_G.LOL = 3
+_G.Disabled = true
+ 
+game:GetService('RunService').RenderStepped:connect(function()
+if _G.Disabled then
+for i,v in next, game:GetService('Players'):GetPlayers() do
+if v.Name ~= game:GetService('Players').LocalPlayer.Name then
+pcall(function()
+v.Character.HumanoidRootPart.Size = Vector3.new(_G.LOL,_G.LOL,_G.LOL)
+v.Character.HumanoidRootPart.Transparency = 1
+v.Character.HumanoidRootPart.BrickColor = BrickColor.new("Really blue")
+v.Character.HumanoidRootPart.Material = "Neon"
+v.Character.HumanoidRootPart.CanCollide = false
+end)
+end
+end
+end
+end)
 local player = game.Players.LocalPlayer
 
 local function removePunchTool()
@@ -119,14 +216,19 @@ local function removePunchTool()
     end
 end
 
-player.CharacterAdded:Connect(removePunchTool)
-removePunchTool()
+player.CharacterAdded:Connect(function()
+    removePunchTool()
+end)
 
+removePunchTool()
 local replicatedStorage = game:GetService("ReplicatedStorage")
+
 local bulletTypes = replicatedStorage:FindFirstChild("BulletTypes")
 if not bulletTypes then return end
+
 local bullet = bulletTypes:FindFirstChild("Bullet")
 if not bullet then return end
+
 local beam = bullet:FindFirstChild("Beam")
 if not beam or not beam:IsA("Beam") then return end
 
