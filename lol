@@ -241,3 +241,16 @@ beam.TextureSpeed = 1
 beam.Transparency = NumberSequence.new(0.05)
 beam.FaceCamera = true
 beam.Color = ColorSequence.new(Color3.new(204, 0, 204))
+local InfiniteJumpEnabled = true
+local UserInputService = game:GetService("UserInputService")
+local Players = game:GetService("Players")
+
+UserInputService.JumpRequest:Connect(function()
+    if InfiniteJumpEnabled then
+        local Humanoid = Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+        -- Проверяем, стоит ли персонаж на земле
+        if Humanoid and Humanoid:GetState() == Enum.HumanoidStateType.Running then
+            Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+        end
+    end
+end)
