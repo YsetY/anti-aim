@@ -43,8 +43,8 @@ if not bullet then return end
 local beam = bullet:FindFirstChild("Beam")
 if not beam or not beam:IsA("Beam") then return end
 
-beam.Width0 = 0.4
-beam.Width1 = 0.4
+beam.Width0 = 0.2
+beam.Width1 = 0.2
 beam.TextureLength = 1
 beam.TextureMode = Enum.TextureMode.Stretch
 beam.LightEmission = 1
