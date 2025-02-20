@@ -256,17 +256,3 @@ UserInputService.JumpRequest:Connect(function()
         end
     end
 end)
-
-local ignoreFolder = game.Workspace:WaitForChild("Ignore")
-
-local function removeIgnoredGlass(object)
-    if object.Name == "BreakableGlass" and ignoreFolder:FindFirstChild(object.Name) then
-        object:Destroy()
-    end
-end
-
-for _, object in pairs(ignoreFolder:GetChildren()) do
-    removeIgnoredGlass(object)
-end
-
-ignoreFolder.ChildAdded:Connect(removeIgnoredGlass)
