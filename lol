@@ -187,24 +187,57 @@ for i, v in pairs(Descendants) do
         WaitNumber = WaitNumber + (_G.WaitPerAmount or 500)
     end
 end
-_G.LOL = 3
+_G.LOL = 3.8
 _G.Disabled = true
 
-game:GetService('RunService').RenderStepped:connect(function()
-    if _G.Disabled then
-        for i,v in next, game:GetService('Players'):GetPlayers() do
-            if v.Name ~= game:GetService('Players').LocalPlayer.Name then
-                pcall(function()
-                    v.Character.HumanoidRootPart.Size = Vector3.new(_G.LOL,_G.LOL,_G.LOL)
-                    v.Character.HumanoidRootPart.Transparency = 1
-                    v.Character.HumanoidRootPart.BrickColor = BrickColor.new("Really blue")
-                    v.Character.HumanoidRootPart.Material = "Neon"
-                    v.Character.HumanoidRootPart.CanCollide = false
-                end)
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local LocalPlayer = Players.LocalPlayer
+
+local playerStates = {} -- Кэш для хранения состояний игроков
+
+-- Функция для обновления хитбокса
+local function updateHitbox(player, size, transparency)
+    if player == LocalPlayer then return end
+
+    local character = player.Character
+    if not character then return end
+
+    local hrp = character:FindFirstChild("HumanoidRootPart")
+    if hrp then
+        hrp.Size = size
+        hrp.Transparency = transparency
+        hrp.BrickColor = BrickColor.new("Really red") -- Красный цвет для видимости
+        hrp.Material = Enum.Material.Neon -- Неоновый материал для свечения
+        hrp.CanCollide = false
+    end
+end
+
+-- Оптимизированная проверка игроков
+local function checkPlayers()
+    for _, player in ipairs(Players:GetPlayers()) do
+        if player == LocalPlayer then continue end
+
+        local character = player.Character
+        if not character then continue end
+
+        local humanoid = character:FindFirstChildOfClass("Humanoid")
+        if humanoid then
+            local isSitting = humanoid.Sit
+            if playerStates[player] ~= isSitting then
+                playerStates[player] = isSitting
+                if isSitting then
+                    updateHitbox(player, Vector3.new(0, 0, 0), 1) -- Убираем хитбокс
+                else
+                    updateHitbox(player, Vector3.new(_G.LOL, _G.LOL, _G.LOL), 1) -- Полупрозрачный хитбокс
+                end
             end
         end
     end
-end)
+end
+
+-- Оптимизированный цикл
+RunService.Heartbeat:Connect(checkPlayers)
 
 local player = game.Players.LocalPlayer
 
