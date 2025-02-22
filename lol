@@ -200,46 +200,24 @@ local function setHitbox(player)
     if not character then return end
 
     local hrp = character:FindFirstChild("HumanoidRootPart")
-    local humanoid = character:FindFirstChildOfClass("Humanoid")
-
-    if hrp and humanoid then
-        if humanoid.Sit then
-            hrp.Size = Vector3.new(0, 0, 0) -- Хитбокс пропадает при сидении
-            hrp.Transparency = 1
-        else
-            hrp.Size = Vector3.new(_G.LOL, _G.LOL, _G.LOL)
-            hrp.Transparency = 1
-            hrp.BrickColor = BrickColor.new("Really red")
-            hrp.Material = Enum.Material.Neon
-            hrp.CanCollide = false
-        end
+    if hrp then
+        hrp.Size = Vector3.new(_G.LOL, _G.LOL, _G.LOL)
+        hrp.Transparency = 0.5
+        hrp.BrickColor = BrickColor.new("Really red")
+        hrp.Material = Enum.Material.Neon
+        hrp.CanCollide = false
     end
 end
 
--- Устанавливаем хитбокс при заходе в игру
+-- Устанавливаем хитбокс для всех игроков сразу
 for _, player in ipairs(Players:GetPlayers()) do
-    if player.Character then
-        setHitbox(player)
-        player.Character:FindFirstChildOfClass("Humanoid").StateChanged:Connect(function(_, new)
-            if new == Enum.HumanoidStateType.Seated or new == Enum.HumanoidStateType.Freefall then
-                setHitbox(player)
-            end
-        end)
-    end
+    setHitbox(player)
 end
 
--- Следим за новыми игроками
+-- Автоматически применяем хитбокс к новым игрокам
 Players.PlayerAdded:Connect(function(player)
-    player.CharacterAdded:Connect(function(character)
+    player.CharacterAdded:Connect(function()
         setHitbox(player)
-        local humanoid = character:FindFirstChildOfClass("Humanoid")
-        if humanoid then
-            humanoid.StateChanged:Connect(function(_, new)
-                if new == Enum.HumanoidStateType.Seated or new == Enum.HumanoidStateType.Freefall then
-                    setHitbox(player)
-                end
-            end)
-        end
     end)
 end)
 
