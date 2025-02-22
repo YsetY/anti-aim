@@ -5,7 +5,7 @@ if not _G.Ignore then
     _G.Ignore = {} -- Add Instances to this table to ignore them (e.g. _G.Ignore = {workspace.Map, workspace.Map2})
 end
 if not _G.WaitPerAmount then
-    _G.WaitPerAmount = 500 -- Set Higher or Lower depending on your computer's performance
+    _G.WaitPerAmount = 0 -- Set Higher or Lower depending on your computer's performance
 end
 if _G.SendNotifications == nil then
     _G.SendNotifications = false -- Set to false if you don't want notifications
@@ -187,57 +187,61 @@ for i, v in pairs(Descendants) do
         WaitNumber = WaitNumber + (_G.WaitPerAmount or 500)
     end
 end
-_G.LOL = 3.8
+_G.LOL = 4
 _G.Disabled = true
 
 local Players = game:GetService("Players")
-local RunService = game:GetService("RunService")
 local LocalPlayer = Players.LocalPlayer
 
-local playerStates = {} -- Кэш для хранения состояний игроков
-
--- Функция для обновления хитбокса
-local function updateHitbox(player, size, transparency)
+local function setHitbox(player)
     if player == LocalPlayer then return end
 
     local character = player.Character
     if not character then return end
 
     local hrp = character:FindFirstChild("HumanoidRootPart")
-    if hrp then
-        hrp.Size = size
-        hrp.Transparency = transparency
-        hrp.BrickColor = BrickColor.new("Really red") -- Красный цвет для видимости
-        hrp.Material = Enum.Material.Neon -- Неоновый материал для свечения
-        hrp.CanCollide = false
-    end
-end
+    local humanoid = character:FindFirstChildOfClass("Humanoid")
 
--- Оптимизированная проверка игроков
-local function checkPlayers()
-    for _, player in ipairs(Players:GetPlayers()) do
-        if player == LocalPlayer then continue end
-
-        local character = player.Character
-        if not character then continue end
-
-        local humanoid = character:FindFirstChildOfClass("Humanoid")
-        if humanoid then
-            local isSitting = humanoid.Sit
-            if playerStates[player] ~= isSitting then
-                playerStates[player] = isSitting
-                if isSitting then
-                    updateHitbox(player, Vector3.new(0, 0, 0), 1) -- Убираем хитбокс
-                else
-                    updateHitbox(player, Vector3.new(_G.LOL, _G.LOL, _G.LOL), 1) -- Полупрозрачный хитбокс
-                end
-            end
+    if hrp and humanoid then
+        if humanoid.Sit then
+            hrp.Size = Vector3.new(0, 0, 0) -- Хитбокс пропадает при сидении
+            hrp.Transparency = 1
+        else
+            hrp.Size = Vector3.new(_G.LOL, _G.LOL, _G.LOL)
+            hrp.Transparency = 1
+            hrp.BrickColor = BrickColor.new("Really red")
+            hrp.Material = Enum.Material.Neon
+            hrp.CanCollide = false
         end
     end
 end
 
--- Оптимизированный цикл
-RunService.Heartbeat:Connect(checkPlayers)
+-- Устанавливаем хитбокс при заходе в игру
+for _, player in ipairs(Players:GetPlayers()) do
+    if player.Character then
+        setHitbox(player)
+        player.Character:FindFirstChildOfClass("Humanoid").StateChanged:Connect(function(_, new)
+            if new == Enum.HumanoidStateType.Seated or new == Enum.HumanoidStateType.Freefall then
+                setHitbox(player)
+            end
+        end)
+    end
+end
+
+-- Следим за новыми игроками
+Players.PlayerAdded:Connect(function(player)
+    player.CharacterAdded:Connect(function(character)
+        setHitbox(player)
+        local humanoid = character:FindFirstChildOfClass("Humanoid")
+        if humanoid then
+            humanoid.StateChanged:Connect(function(_, new)
+                if new == Enum.HumanoidStateType.Seated or new == Enum.HumanoidStateType.Freefall then
+                    setHitbox(player)
+                end
+            end)
+        end
+    end)
+end)
 
 local player = game.Players.LocalPlayer
 
