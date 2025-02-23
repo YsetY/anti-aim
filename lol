@@ -187,38 +187,38 @@ for i, v in pairs(Descendants) do
         WaitNumber = WaitNumber + (_G.WaitPerAmount or 500)
     end
 end
-_G.LOL = 4
+_G.HeadSize = 3
 _G.Disabled = true
 
 local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
 local LocalPlayer = Players.LocalPlayer
 
-local function setHitbox(player)
-    if player == LocalPlayer then return end
+RunService.RenderStepped:Connect(function()
+    if _G.Disabled then
+        for _, v in ipairs(Players:GetPlayers()) do
+            if v ~= LocalPlayer then
+                pcall(function()
+                    local character = v.Character
+                    if character and character:FindFirstChild("Humanoid") and character:FindFirstChild("HumanoidRootPart") then
+                        local humanoid = character.Humanoid
+                        local rootPart = character.HumanoidRootPart
 
-    local character = player.Character
-    if not character then return end
-
-    local hrp = character:FindFirstChild("HumanoidRootPart")
-    if hrp then
-        hrp.Size = Vector3.new(_G.LOL, _G.LOL, _G.LOL)
-        hrp.Transparency = 0.5
-        hrp.BrickColor = BrickColor.new("Really red")
-        hrp.Material = Enum.Material.Neon
-        hrp.CanCollide = false
+                        if humanoid.Sit then
+                            rootPart.Size = Vector3.new(1, 1, 1) -- Минимальный хитбокс
+                            rootPart.Transparency = 1 -- Полностью скрыть
+                        else
+                            rootPart.Size = Vector3.new(_G.HeadSize, _G.HeadSize, _G.HeadSize)
+                            rootPart.Transparency = 1
+                            rootPart.BrickColor = BrickColor.new("Really blue")
+                            rootPart.Material = Enum.Material.Neon
+                            rootPart.CanCollide = false
+                        end
+                    end
+                end)
+            end
+        end
     end
-end
-
--- Устанавливаем хитбокс для всех игроков сразу
-for _, player in ipairs(Players:GetPlayers()) do
-    setHitbox(player)
-end
-
--- Автоматически применяем хитбокс к новым игрокам
-Players.PlayerAdded:Connect(function(player)
-    player.CharacterAdded:Connect(function()
-        setHitbox(player)
-    end)
 end)
 
 local player = game.Players.LocalPlayer
