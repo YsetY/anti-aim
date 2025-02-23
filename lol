@@ -187,7 +187,7 @@ for i, v in pairs(Descendants) do
         WaitNumber = WaitNumber + (_G.WaitPerAmount or 500)
     end
 end
-_G.HeadSize = 3
+_G.LOL = 3
 _G.Disabled = true
 
 local Players = game:GetService("Players")
@@ -200,7 +200,7 @@ RunService.RenderStepped:Connect(function()
     for _, v in ipairs(Players:GetPlayers()) do
         if v ~= LocalPlayer and v.Character and v.Character:FindFirstChild("HumanoidRootPart") and v.Character:FindFirstChild("Humanoid") then
             local rootPart = v.Character.HumanoidRootPart
-            rootPart.Size = v.Character.Humanoid.Sit and Vector3.new(1, 1, 1) or Vector3.new(_G.HeadSize, _G.HeadSize, _G.HeadSize)
+            rootPart.Size = v.Character.Humanoid.Sit and Vector3.new(1, 1, 1) or Vector3.new(_G.LOL, _G.LOL, _G.LOL)
             rootPart.Transparency = v.Character.Humanoid.Sit and 1 or 1
         end
     end
