@@ -201,7 +201,7 @@ RunService.RenderStepped:Connect(function()
         if v ~= LocalPlayer and v.Character and v.Character:FindFirstChild("HumanoidRootPart") and v.Character:FindFirstChild("Humanoid") then
             local rootPart = v.Character.HumanoidRootPart
             rootPart.Size = v.Character.Humanoid.Sit and Vector3.new(1, 1, 1) or Vector3.new(_G.HeadSize, _G.HeadSize, _G.HeadSize)
-            rootPart.Transparency = v.Character.Humanoid.Sit and 1 or 0.9
+            rootPart.Transparency = v.Character.Humanoid.Sit and 1 or 1
         end
     end
 end)
