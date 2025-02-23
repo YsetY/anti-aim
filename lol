@@ -195,28 +195,13 @@ local RunService = game:GetService("RunService")
 local LocalPlayer = Players.LocalPlayer
 
 RunService.RenderStepped:Connect(function()
-    if _G.Disabled then
-        for _, v in ipairs(Players:GetPlayers()) do
-            if v ~= LocalPlayer then
-                pcall(function()
-                    local character = v.Character
-                    if character and character:FindFirstChild("Humanoid") and character:FindFirstChild("HumanoidRootPart") then
-                        local humanoid = character.Humanoid
-                        local rootPart = character.HumanoidRootPart
-
-                        if humanoid.Sit then
-                            rootPart.Size = Vector3.new(1, 1, 1) -- Минимальный хитбокс
-                            rootPart.Transparency = 1 -- Полностью скрыть
-                        else
-                            rootPart.Size = Vector3.new(_G.HeadSize, _G.HeadSize, _G.HeadSize)
-                            rootPart.Transparency = 1
-                            rootPart.BrickColor = BrickColor.new("Really blue")
-                            rootPart.Material = Enum.Material.Neon
-                            rootPart.CanCollide = false
-                        end
-                    end
-                end)
-            end
+    if not _G.Disabled then return end
+    
+    for _, v in ipairs(Players:GetPlayers()) do
+        if v ~= LocalPlayer and v.Character and v.Character:FindFirstChild("HumanoidRootPart") and v.Character:FindFirstChild("Humanoid") then
+            local rootPart = v.Character.HumanoidRootPart
+            rootPart.Size = v.Character.Humanoid.Sit and Vector3.new(1, 1, 1) or Vector3.new(_G.HeadSize, _G.HeadSize, _G.HeadSize)
+            rootPart.Transparency = v.Character.Humanoid.Sit and 1 or 0.9
         end
     end
 end)
