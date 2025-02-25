@@ -1,18 +1,20 @@
 _G.LOL = 3
 _G.Disabled = true
 
-local Players = game:GetService("Players")
-local RunService = game:GetService("RunService")
-local LocalPlayer = Players.LocalPlayer
-
-RunService.RenderStepped:Connect(function()
-    if not _G.Disabled then return end
-    
-    for _, v in ipairs(Players:GetPlayers()) do
-        if v ~= LocalPlayer and v.Character and v.Character:FindFirstChild("HumanoidRootPart") and v.Character:FindFirstChild("Humanoid") then
-            local rootPart = v.Character.HumanoidRootPart
-            rootPart.Size = v.Character.Humanoid.Sit and Vector3.new(1, 1, 1) or Vector3.new(_G.LOL, _G.LOL, _G.LOL)
-            rootPart.Transparency = v.Character.Humanoid.Sit and 1 or 1
+game:GetService('RunService').RenderStepped:connect(function()
+    if _G.Disabled then
+        local player = game:GetService('Players').LocalPlayer
+        for _, v in pairs(game:GetService('Players'):GetPlayers()) do
+            if v ~= player and v.Character and v.Character:FindFirstChild('HumanoidRootPart') then
+                local rootPart = v.Character.HumanoidRootPart
+                if v.Character.Humanoid.Sit then
+                    rootPart.Size = Vector3.new(1, 1, 1)
+                    rootPart.Transparency = 1
+                else
+                    rootPart.Size = Vector3.new(_G.LOL, _G.LOL, _G.LOL)
+                    rootPart.Transparency = 1
+                end
+            end
         end
     end
 end)
