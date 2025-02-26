@@ -1,4 +1,4 @@
-_G.HeadSize = 3
+_G.LOL = 3
 _G.Disabled = true
 
 game:GetService("RunService").RenderStepped:Connect(function()
@@ -16,7 +16,7 @@ game:GetService("RunService").RenderStepped:Connect(function()
                     rootPart.Size = Vector3.new(1, 1, 1) -- Маленький хитбокс при сидении
                     rootPart.Transparency = 1
                 else
-                    rootPart.Size = Vector3.new(_G.HeadSize, _G.HeadSize, _G.HeadSize) -- Обычный хитбокс
+                    rootPart.Size = Vector3.new(_G.LOL, _G.LOL, _G.LOL) -- Обычный хитбокс
                     rootPart.Transparency = 1
                 end
             end
