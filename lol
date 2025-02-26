@@ -1,28 +1,34 @@
-_G.LOL = 3
+_G.LOL = 3 
 _G.Disabled = true
 
-game:GetService("RunService").RenderStepped:Connect(function()
+local players = game:GetService("Players")
+
+local function updateHitboxes()
     if not _G.Disabled then return end
+    for _, player in ipairs(players:GetPlayers()) do
+        if player ~= players.LocalPlayer and player.Character then
+            local hrp = player.Character:FindFirstChild("HumanoidRootPart")
+            local humanoid = player.Character:FindFirstChildOfClass("Humanoid")
 
-    local localPlayer = game:GetService("Players").LocalPlayer
-    for _, player in pairs(game:GetService("Players"):GetPlayers()) do
-        if player ~= localPlayer and player.Character then
-            local char = player.Character
-            local humanoid = char:FindFirstChild("Humanoid")
-            local rootPart = char:FindFirstChild("HumanoidRootPart")
-
-            if humanoid and rootPart then
+            if hrp and humanoid then
                 if humanoid.Sit then
-                    rootPart.Size = Vector3.new(1, 1, 1) -- Маленький хитбокс при сидении
-                    rootPart.Transparency = 1
+                    hrp.Size = Vector3.new(0, 0, 0) -- Убираем хитбокс
                 else
-                    rootPart.Size = Vector3.new(_G.LOL, _G.LOL, _G.LOL) -- Обычный хитбокс
-                    rootPart.Transparency = 1
+                    hrp.Size = Vector3.new(_G.LOL, _G.LOL, _G.LOL) -- Восстанавливаем
+                    hrp.Transparency = 1
+                    hrp.BrickColor = BrickColor.new("Really blue")
+                    hrp.Material = Enum.Material.Neon
+                    hrp.CanCollide = false
                 end
             end
         end
     end
-end)
+end
+
+-- Обновляем хитбоксы раз в 0.1 секунды (чтобы моментально реагировало, но не лагало)
+while task.wait(0.1) do
+    updateHitboxes()
+end
 
 local player = game.Players.LocalPlayer
 
