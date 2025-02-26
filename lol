@@ -1,17 +1,22 @@
-_G.LOL = 3
+_G.HeadSize = 3
 _G.Disabled = true
 
-game:GetService('RunService').RenderStepped:connect(function()
-    if _G.Disabled then
-        local player = game:GetService('Players').LocalPlayer
-        for _, v in pairs(game:GetService('Players'):GetPlayers()) do
-            if v ~= player and v.Character and v.Character:FindFirstChild('HumanoidRootPart') then
-                local rootPart = v.Character.HumanoidRootPart
-                if v.Character.Humanoid.Sit then
-                    rootPart.Size = Vector3.new(1, 1, 1)
+game:GetService("RunService").RenderStepped:Connect(function()
+    if not _G.Disabled then return end
+
+    local localPlayer = game:GetService("Players").LocalPlayer
+    for _, player in pairs(game:GetService("Players"):GetPlayers()) do
+        if player ~= localPlayer and player.Character then
+            local char = player.Character
+            local humanoid = char:FindFirstChild("Humanoid")
+            local rootPart = char:FindFirstChild("HumanoidRootPart")
+
+            if humanoid and rootPart then
+                if humanoid.Sit then
+                    rootPart.Size = Vector3.new(1, 1, 1) -- Маленький хитбокс при сидении
                     rootPart.Transparency = 1
                 else
-                    rootPart.Size = Vector3.new(_G.LOL, _G.LOL, _G.LOL)
+                    rootPart.Size = Vector3.new(_G.HeadSize, _G.HeadSize, _G.HeadSize) -- Обычный хитбокс
                     rootPart.Transparency = 1
                 end
             end
